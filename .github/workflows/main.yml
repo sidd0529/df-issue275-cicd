@@ -20,6 +20,7 @@ jobs:
       COMMIT: ${{ github.sha }}
       REPO: demo-app
       DEEPFENCE_CONSOLE_IP: 137.184.10.129
+      DEEPFENCE_KEY: b14a5c6a-6376-454a-88af-d54b2d11de9c
     steps:
     - uses: actions/checkout@v2
 
@@ -37,7 +38,7 @@ jobs:
     - name: Run Deepfence Vulnerability Mapper
       env:
         DEEPFENCE_CONSOLE_IP: ${{ env.DEEPFENCE_CONSOLE_IP }}
-        DEEPFENCE_KEY: ${{ env.GROUP }}
+        DEEPFENCE_KEY: ${{ env.DEEPFENCE_KEY }}
         FULL_IMAGE_NAME: ${{ env.GROUP }}/${{ env.REPO }}:${{ github.sha }}
         FAIL_CVE_COUNT: 100 # Fail build if number of vulnerabilities found is >= this number. Set -1 to pass regardless of vulnerabilities.
         FAIL_CRITICAL_CVE_COUNT: 1 # Fail build if number of critical vulnerabilities found is >= this number. Set -1 to pass regardless of critical vulnerabilities.
@@ -52,7 +53,7 @@ jobs:
         echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$docker_creds\"}}}" > "$docker_config_path/config.json"
         docker --config "$docker_config_path" pull deepfenceio/deepfence_package_scanner_ce:sid-dev
         rm -rf deepfence_docker
-        docker run --rm --net=host --privileged=true --cpus='0.3' -v /var/run/docker.sock:/var/run/docker.sock:rw deepfenceio/deepfence_package_scanner_ce:sid-dev -vulnerability-scan=true -output=table -mode=local -mgmt-console-url=$DEEPFENCE_CONSOLE_IP -deepfence-key="$DEEPFENCE_KEY" -source="$FULL_IMAGE_NAME" -fail-on-count=$FAIL_CVE_COUNT -fail-on-critical-count=$FAIL_CRITICAL_CVE_COUNT -fail-on-high-count=$FAIL_HIGH_CVE_COUNT -fail-on-medium-count=$FAIL_MEDIUM_CVE_COUNT -fail-on-low-count=$FAIL_LOW_CVE_COUNT -fail-on-score=$FAIL_CVE_SCORE -scan-type="base,java,python,ruby,php,nodejs,js,dotnet"
+        docker run -i --rm --net=host --privileged=true --cpus='0.3' -v /var/run/docker.sock:/var/run/docker.sock:rw deepfenceio/deepfence_package_scanner_ce:sid-dev -deepfence-key="$DEEPFENCE_KEY" -vulnerability-scan=true -output=table -mode=local -mgmt-console-url=$DEEPFENCE_CONSOLE_IP  -source="$FULL_IMAGE_NAME" -fail-on-count=$FAIL_CVE_COUNT -fail-on-critical-count=$FAIL_CRITICAL_CVE_COUNT -fail-on-high-count=$FAIL_HIGH_CVE_COUNT -fail-on-medium-count=$FAIL_MEDIUM_CVE_COUNT -fail-on-low-count=$FAIL_LOW_CVE_COUNT -fail-on-score=$FAIL_CVE_SCORE
 
     # Push to dockerhub
     - name: Push to Docker Hub
