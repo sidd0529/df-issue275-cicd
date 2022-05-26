@@ -45,7 +45,7 @@ jobs:
         FAIL_HIGH_CVE_COUNT: 93 # Fail build if number of high vulnerabilities found is >= this number. Set -1 to pass regardless of high vulnerabilities.
         FAIL_MEDIUM_CVE_COUNT: 110 # Fail build if number of medium vulnerabilities found is >= this number. Set -1 to pass regardless of medium vulnerabilities.
         FAIL_LOW_CVE_COUNT: 19 # Fail build if number of low vulnerabilities found is >= this number. Set -1 to pass regardless of low vulnerabilities.
-        FAIL_CVE_SCORE: 8 # Fail build if cumulative CVE score is >= this value. Set -1 to pass regardless of cve score.
+        FAIL_CVE_SCORE: 11 # Fail build if cumulative CVE score is >= this value. Set -1 to pass regardless of cve score.
       run: |
         mkdir deepfence_docker
         docker_config_path="$(pwd)/deepfence_docker"
